@@ -9,3 +9,6 @@ coverage/
 
 # Never let the app's local runtime state leak into the repo.
 GameOfLife/
+
+# Stray artifact written into cwd by ruflo/ruvector tooling, not part of the app
+ruvector.db
