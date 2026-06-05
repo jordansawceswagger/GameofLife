@@ -1,0 +1,50 @@
+{
+  "targets": [
+    {
+      "id": "t_seed_pc_1",
+      "created": "2026-05-27",
+      "status": "research",
+      "history": [{ "date": "2026-05-27", "event": "Added to pipeline (Tier 1)" }],
+      "name": "[Find associate - Phillips & Cohen]",
+      "firm": "Phillips & Cohen LLP",
+      "title": "Associate, FCA / Healthcare Fraud",
+      "jurisdiction": "D.D.C. / S.D.N.Y.",
+      "linkedinUrl": "https://www.linkedin.com/company/phillips-cohen-llp/",
+      "email": "",
+      "recentCase": "Kaiser $581M risk adjustment qui tam",
+      "sampleEntityType": "home health agency",
+      "notes": "TIER 1 - Gold-standard dedicated whistleblower firm. NO COLD CALLS. || [AVATAR-ROUTE 2026-06-01] AVATAR: B | FRAUD_HISTORY: [MA-upcoding, risk-adjustment, dialysis] | CIA_HOOK: yes | SHELL_HOOK: yes | PRIMARY_ROUTE: B-DaVita-style | ROUTE_REASON: Kaiser, DaVita, Aetna in the stable, risk-adjustment is the canonical whale theory."
+    },
+    {
+      "id": "t_seed_mala_1",
+      "created": "2026-05-27",
+      "status": "research",
+      "history": [{ "date": "2026-05-27", "event": "Added to pipeline (Tier 2)" }],
+      "name": "Frank Michael Malatesta",
+      "firm": "Malatesta Law Office (solo)",
+      "title": "Solo Principal",
+      "jurisdiction": "M.D. Fla.",
+      "linkedinUrl": "",
+      "email": "",
+      "recentCase": "Loucks v. Vivo Healthcare Consulting LLC",
+      "sampleEntityType": "home health agency",
+      "notes": "TIER 2 SIDECAR - Solo employment lawyer. Pitch principal directly. || [AVATAR-ROUTE 2026-06-01] AVATAR: A | FRAUD_HISTORY: [SNF, nursing-home-consulting] | PRIMARY_ROUTE: A-Logan-style | ROUTE_REASON: SNF and nursing-home consulting defendants, community-provider category."
+    },
+    {
+      "id": "t_seed_edge_1",
+      "created": "2026-05-27",
+      "status": "research",
+      "history": [],
+      "name": "Edge Case Attorney",
+      "firm": "No Tag LLP",
+      "title": "Associate",
+      "jurisdiction": "N.D. Cal.",
+      "linkedinUrl": "",
+      "email": "edge@example.com",
+      "recentCase": "Some unsealed matter",
+      "sampleEntityType": "lab",
+      "notes": "TIER 3 - this record has no avatar-route tag at all, exercising the default path."
+    }
+  ],
+  "config": { "note": "fixture roster, not real data" }
+}

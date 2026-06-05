@@ -1,0 +1,101 @@
+{
+  "lastImport": "2026-06-01T08:00:00-07:00",
+  "contacts": [
+    {
+      "id": "t_seed_pc_1",
+      "name": "[Find associate - Phillips & Cohen]",
+      "firm": "Phillips & Cohen LLP",
+      "title": "Associate, FCA / Healthcare Fraud",
+      "jurisdiction": "D.D.C. / S.D.N.Y.",
+      "tier": 1,
+      "recentCase": "Kaiser $581M risk adjustment qui tam",
+      "fraud_history": ["MA-upcoding", "risk-adjustment", "dialysis"],
+      "primary_route": "B-DaVita-style",
+      "linkedinUrl": "https://www.linkedin.com/company/phillips-cohen-llp/",
+      "email": "",
+      "status": "research",
+      "avatar": null,
+      "matchedSample": null,
+      "doNotContact": false,
+      "dncReason": "",
+      "accepted": false,
+      "replied": false,
+      "followedUp": false,
+      "lastTouch": "2026-06-01",
+      "notes": "",
+      "history": [
+        {
+          "ts": "2026-06-01T08:00:00-07:00",
+          "kind": "sourced",
+          "detail": "Imported from research roster",
+          "from": null,
+          "to": null
+        }
+      ]
+    },
+    {
+      "id": "t_seed_mala_1",
+      "name": "Frank Michael Malatesta",
+      "firm": "Malatesta Law Office (solo)",
+      "title": "Solo Principal",
+      "jurisdiction": "M.D. Fla.",
+      "tier": 2,
+      "recentCase": "Loucks v. Vivo Healthcare Consulting LLC",
+      "fraud_history": ["SNF", "nursing-home-consulting"],
+      "primary_route": "A-Logan-style",
+      "linkedinUrl": "",
+      "email": "",
+      "status": "connected",
+      "avatar": "A",
+      "matchedSample": "logan",
+      "doNotContact": false,
+      "dncReason": "",
+      "accepted": true,
+      "replied": false,
+      "followedUp": false,
+      "lastTouch": "2026-06-02",
+      "notes": "Warm opener via the Cukier portfolio brief.",
+      "history": [
+        {
+          "ts": "2026-06-01T08:00:00-07:00",
+          "kind": "sourced",
+          "detail": "Imported from research roster",
+          "from": null,
+          "to": null
+        }
+      ]
+    },
+    {
+      "id": "t_seed_edge_1",
+      "name": "Edge Case Attorney",
+      "firm": "No Tag LLP",
+      "title": "Associate",
+      "jurisdiction": "N.D. Cal.",
+      "tier": 3,
+      "recentCase": "Some unsealed matter",
+      "fraud_history": [],
+      "primary_route": "",
+      "linkedinUrl": "",
+      "email": "edge@example.com",
+      "status": "in_conversation",
+      "avatar": null,
+      "matchedSample": null,
+      "doNotContact": false,
+      "dncReason": "",
+      "accepted": false,
+      "replied": true,
+      "followedUp": false,
+      "lastTouch": "2026-06-03",
+      "notes": "",
+      "history": [
+        {
+          "ts": "2026-06-01T08:00:00-07:00",
+          "kind": "sourced",
+          "detail": "Imported from research roster",
+          "from": null,
+          "to": null
+        }
+      ]
+    }
+  ]
+}

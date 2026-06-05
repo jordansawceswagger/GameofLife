@@ -4,6 +4,8 @@ import { createTray } from './tray'
 import { createPopoverWindow, showPopover, togglePopover } from './window'
 import { registerHotkeys, unregisterHotkeys } from './hotkeys'
 import { registerIpcHandlers } from './ipc'
+import { ensureStore } from './crm/persistence'
+import { rebuildEntityLinks } from './crm/entity-links'
 import { NAVIGATE_CHANNEL, type ViewName } from '../shared/views'
 
 let tray: Tray | null = null
@@ -21,6 +23,11 @@ function bootstrap(): void {
   app.dock?.hide()
 
   registerIpcHandlers()
+
+  // Warm up CRM state: ensure the live store exists and build the entity-link map.
+  // Import is NOT auto-run; the operator triggers crmImport explicitly (see DECISIONS).
+  void ensureStore()
+  void rebuildEntityLinks()
 
   popover = createPopoverWindow()
   tray = createTray({
