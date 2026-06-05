@@ -1,0 +1,15 @@
+appId: com.jordan.gameoflife
+productName: Game of Life
+directories:
+  output: release
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - assets/**/*
+mac:
+  # .app output only. Signing and notarization are deferred (separate task).
+  target:
+    - target: dir
+      arch: arm64
+  category: public.app-category.productivity
+  identity: null
