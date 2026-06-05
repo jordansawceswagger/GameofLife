@@ -3,6 +3,7 @@ import type { BrowserWindow, Tray } from 'electron'
 import { createTray } from './tray'
 import { createPopoverWindow, showPopover, togglePopover } from './window'
 import { registerHotkeys, unregisterHotkeys } from './hotkeys'
+import { registerIpcHandlers } from './ipc'
 import { NAVIGATE_CHANNEL, type ViewName } from '../shared/views'
 
 let tray: Tray | null = null
@@ -18,6 +19,8 @@ function navigateTo(view: ViewName): void {
 function bootstrap(): void {
   // Menu-bar app: hide the dock icon (macOS only).
   app.dock?.hide()
+
+  registerIpcHandlers()
 
   popover = createPopoverWindow()
   tray = createTray({

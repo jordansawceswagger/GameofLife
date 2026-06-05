@@ -3,11 +3,13 @@ import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen, cleanup, act, fireEvent } from '@testing-library/react'
 import { App } from '../../src/renderer/App'
 import { VIEW_NAMES, type ViewName } from '../../src/shared/views'
+import type { GolApi } from '../../src/shared/api'
 
 afterEach(cleanup)
 
 function installGolBridge() {
   let handler: ((view: ViewName) => void) | null = null
+  // Only onNavigate is exercised by the router; stub just that slice of the bridge.
   window.gol = {
     onNavigate: (cb: (view: ViewName) => void) => {
       handler = cb
@@ -15,7 +17,7 @@ function installGolBridge() {
         handler = null
       }
     },
-  }
+  } as unknown as GolApi
   return {
     navigate: (view: ViewName) =>
       act(() => {
