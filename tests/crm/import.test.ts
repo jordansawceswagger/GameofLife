@@ -106,6 +106,17 @@ describe('importFromSource', () => {
     expect((await importFromSource()).removed).toBe(0)
   })
 
+  it('aborts with a clear error when the source roster is missing (no mass-flagging)', async () => {
+    temp = await makeTempCrm()
+    const prev = process.env.GOL_CRM_SOURCE
+    process.env.GOL_CRM_SOURCE = path.join(temp.dir, 'does-not-exist.json')
+    restoreSource = () => {
+      if (prev === undefined) delete process.env.GOL_CRM_SOURCE
+      else process.env.GOL_CRM_SOURCE = prev
+    }
+    await expect(importFromSource()).rejects.toThrow(/source roster not found/i)
+  })
+
   it('imports the real seed roster read-only (smoke; skipped when absent)', async () => {
     temp = await makeTempCrm()
     const realSource = path.join(homedir(), 'Delilah', 'research', 'crm', 'fca_crm_seed.json')

@@ -35,7 +35,7 @@ map to what landed overnight and what to poke at first.
 
 1. `cd ~/Documents/Claude/Projects/game-of-life-app`
 2. `npm install` (in case anything is missing)
-3. `npm test` -- expect green (75 tests, 15 files, 0 failures, 0 skipped)
+3. `npm test` -- expect green (94 tests, 19 files, 0 failures, 0 skipped)
 4. `npm run typecheck` -- expect 0 errors
 5. `npm run dev` -- expect a tray icon to appear in the menu bar
 6. Press each hotkey, expect the right stub popover (morning-intake, done, pause,
@@ -96,10 +96,20 @@ top-level notes plus history, and the YAML date normalization.
 
 ## Tests that did not pass (if any)
 
-None. `npm test` exits 0: 75 tests across 15 files, 0 failures, 0 skipped. Every
+None. `npm test` exits 0: 94 tests across 19 files, 0 failures, 0 skipped. Every
 step's tests pass, including the CRM crash-recovery and idempotent-import suites and
 a read-only smoke import against the real `fca_crm_seed.json`. Nothing was deferred
 to a documented failure.
+
+After the build I ran an adversarial correctness review over the 11 data-layer /
+vault / claude modules. It confirmed the headline invariants are correct (import
+never touches STATE, atomic-write crash safety, backup pruning, status/avatar cycle
+wrap, claude.ts settle/timer handling) and surfaced five real edge bugs, all now
+fixed with regression tests: AVATAR-ROUTE field matching is now delimiter-anchored
+(free text can't poison a field) and bracket-aware; `parseTier` is word-boundary
+anchored (no "fron-TIER" false match); `crmRebuildMaterialized` compares timestamps
+by epoch, not string order; `importFromSource` aborts with a clear error on a missing
+roster instead of a raw ENOENT; and entity-link ids are de-duplicated per file.
 
 ## Sound file
 

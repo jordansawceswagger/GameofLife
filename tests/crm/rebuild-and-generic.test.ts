@@ -42,6 +42,25 @@ describe('crmRebuildMaterialized (repair)', () => {
     expect(fixed.avatar).toBe('A')
     expect(fixed.lastTouch).toBe(todayISODate())
   })
+
+  it('picks lastTouch by chronological epoch, not lexicographic string order, across offsets', async () => {
+    const base = JSON.parse(await readFile(temp.crmFile, 'utf8')) as CrmStore
+    const contact = {
+      ...base.contacts[0],
+      id: 't_tz_1',
+      history: [
+        // 2026-06-06T01:00:00Z (lexicographically the larger string)
+        { ts: '2026-06-06T01:00:00+00:00', kind: 'note', detail: 'a', from: null, to: null },
+        // 2026-06-05T23:30:00-07:00 == 2026-06-06T06:30:00Z (the actual latest instant)
+        { ts: '2026-06-05T23:30:00-07:00', kind: 'note', detail: 'b', from: null, to: null },
+      ],
+    }
+    await writeFile(temp.crmFile, JSON.stringify({ lastImport: null, contacts: [contact] }), 'utf8')
+
+    const fixed = await crmRebuildMaterialized('t_tz_1')
+    // The later instant is the -07:00 entry, whose local date is 2026-06-05.
+    expect(fixed.lastTouch).toBe('2026-06-05')
+  })
 })
 
 describe('crmMutate / crmAppendHistory generics', () => {

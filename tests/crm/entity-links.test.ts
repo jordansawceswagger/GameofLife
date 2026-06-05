@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { mkdtemp, rm, mkdir, cp } from 'node:fs/promises'
+import { mkdtemp, rm, mkdir, cp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -36,6 +36,21 @@ describe('entity-links reverse map', () => {
     // gamma has an empty crm_contact_ids array
     expect(getEntitiesForContact('t_seed_edge_1')).toEqual([])
     expect(getEntitiesForContact('nonexistent')).toEqual([])
+  })
+
+  it('dedupes a contact id repeated within a single entity file', async () => {
+    vaultRoot = await mkdtemp(path.join(tmpdir(), 'gol-vault-dup-'))
+    const entitiesDir = path.join(vaultRoot, '20_Delilah', 'Entities')
+    await mkdir(entitiesDir, { recursive: true })
+    await writeFile(
+      path.join(entitiesDir, 'dup.md'),
+      '---\ncrm_contact_ids: [t_seed_pc_1, t_seed_pc_1]\n---\nbody\n',
+      'utf8',
+    )
+    process.env.GOL_VAULT_ROOT = vaultRoot
+
+    await buildEntityLinks()
+    expect(getEntitiesForContact('t_seed_pc_1')).toEqual(['dup'])
   })
 
   it('returns empty when the Entities folder is missing', async () => {

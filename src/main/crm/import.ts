@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { ensureStore, loadStore, persistStore } from './persistence'
 import { readJSON } from './atomic'
 import { crmSourcePath } from './paths'
@@ -61,7 +62,15 @@ function sourceFieldsOf(src: SourceRecord): Pick<
  */
 export async function importFromSource(): Promise<CrmImportResult> {
   await ensureStore()
-  const roster = await readJSON<SourceRoster>(crmSourcePath())
+  const sourcePath = crmSourcePath()
+  // Explicit guard: a missing roster aborts BEFORE the removal pass, so an absent
+  // source file can never mass-flag every live contact as source_removed.
+  if (!existsSync(sourcePath)) {
+    throw new Error(
+      `CRM source roster not found: ${sourcePath}. Import aborted; no contacts were changed.`,
+    )
+  }
+  const roster = await readJSON<SourceRoster>(sourcePath)
   const sources = Array.isArray(roster.targets) ? roster.targets : []
 
   const store: CrmStore = await loadStore()

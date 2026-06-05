@@ -23,9 +23,10 @@ export async function buildEntityLinks(): Promise<Map<string, string[]>> {
       const data = matter(await readFile(path.join(dir, file), 'utf8')).data as {
         crm_contact_ids?: unknown
       }
-      const ids = Array.isArray(data.crm_contact_ids) ? data.crm_contact_ids : []
+      const raw = Array.isArray(data.crm_contact_ids) ? data.crm_contact_ids : []
+      // Dedupe ids within a file so an id listed twice does not double-count the slug.
+      const ids = new Set(raw.filter((id): id is string => typeof id === 'string'))
       for (const id of ids) {
-        if (typeof id !== 'string') continue
         const list = map.get(id) ?? []
         list.push(slug)
         map.set(id, list)

@@ -215,10 +215,18 @@ export async function crmRebuildMaterialized(id: string): Promise<CrmContact> {
   let status: Status = 'research'
   let avatar: Avatar = null
   let lastTs: string | null = null
+  let lastMs = -Infinity
   for (const h of contact.history) {
+    // status/avatar follow append order (chronological intent).
     if (h.kind === 'status_change' && h.to) status = h.to as Status
     else if (h.kind === 'avatar_change') avatar = (h.to as Avatar) ?? null
-    if (!lastTs || h.ts > lastTs) lastTs = h.ts
+    // lastTouch picks the chronologically latest ts by epoch, not by string order
+    // (ISO strings with differing UTC offsets do not sort chronologically).
+    const ms = Date.parse(h.ts)
+    if (Number.isFinite(ms) && ms >= lastMs) {
+      lastMs = ms
+      lastTs = h.ts
+    }
   }
   contact.status = status
   contact.avatar = avatar

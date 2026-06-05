@@ -16,9 +16,17 @@ export interface AvatarRouteParsed {
 
 const EMPTY: AvatarRouteParsed = { avatar: null, fraud_history: [], primary_route: '' }
 
-function field(tag: string, name: string): string | null {
-  // Capture up to the next ` | ` field delimiter (or end of the tag line).
-  const m = new RegExp(`${name}\\s*:\\s*([^|]*)`).exec(tag)
+/** Drop the leading `[AVATAR-ROUTE <date>]` header so field names sit at boundaries. */
+function stripHeader(tag: string): string {
+  return tag.replace(/^\[AVATAR-ROUTE[^\]]*\]\s*/, '')
+}
+
+function field(body: string, name: string): string | null {
+  // Anchor the field name to a delimiter boundary (start of the de-headered tag or
+  // a `|` separator) so a token that appears inside another field's free text
+  // (e.g. "PRIMARY_ROUTE:" mentioned inside ROUTE_REASON) cannot poison the match.
+  // A bracketed value is captured whole, so internal separators never truncate it.
+  const m = new RegExp(`(?:^|\\|)\\s*${name}\\s*:\\s*(\\[[^\\]]*\\]|[^|]*)`).exec(body)
   return m ? m[1].trim() : null
 }
 
@@ -35,8 +43,9 @@ function parseList(value: string | null): string[] {
   if (!value) return []
   const inner = value.replace(/^\[/, '').replace(/\]$/, '').trim()
   if (!inner) return []
+  // Accept either comma or pipe as the item separator inside the bracket span.
   return inner
-    .split(',')
+    .split(/[,|]/)
     .map((s) => s.trim())
     .filter(Boolean)
 }
@@ -50,16 +59,18 @@ export function parseAvatarRoute(notes: string): AvatarRouteParsed {
   let tag = notes.slice(idx)
   const nl = tag.indexOf('\n')
   if (nl !== -1) tag = tag.slice(0, nl)
+  const body = stripHeader(tag)
 
   return {
-    avatar: parseAvatarValue(field(tag, 'AVATAR')),
-    fraud_history: parseList(field(tag, 'FRAUD_HISTORY')),
-    primary_route: (field(tag, 'PRIMARY_ROUTE') ?? '').trim(),
+    avatar: parseAvatarValue(field(body, 'AVATAR')),
+    fraud_history: parseList(field(body, 'FRAUD_HISTORY')),
+    primary_route: (field(body, 'PRIMARY_ROUTE') ?? '').trim(),
   }
 }
 
-/** Derive the numeric tier from the legacy "TIER 1" prose marker in notes. */
+/** Derive the numeric tier from the legacy "TIER 1" prose marker in notes.
+ * Word-boundary anchored so "frontier", "rentier", etc. do not match. */
 export function parseTier(notes: string): number {
-  const m = /TIER\s*(\d+)/i.exec(notes ?? '')
+  const m = /\bTIER\s*(\d+)/i.exec(notes ?? '')
   return m ? Number(m[1]) : 0
 }

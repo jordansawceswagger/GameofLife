@@ -51,6 +51,22 @@ describe('parseAvatarRoute', () => {
     expect(r.fraud_history).toEqual([])
     expect(r.primary_route).toBe('')
   })
+
+  it('does not let ROUTE_REASON free text poison AVATAR or PRIMARY_ROUTE', () => {
+    const notes =
+      '[AVATAR-ROUTE 2026-06-01] AVATAR: A | FRAUD_HISTORY: [x] | PRIMARY_ROUTE: A-Logan-style | ROUTE_REASON: we weighed AVATAR: B and PRIMARY_ROUTE: B-DaVita-style but chose A.'
+    const r = parseAvatarRoute(notes)
+    expect(r.avatar).toBe('A')
+    expect(r.primary_route).toBe('A-Logan-style')
+  })
+
+  it('captures a FRAUD_HISTORY list even if items are pipe-separated inside the brackets', () => {
+    const r = parseAvatarRoute(
+      '[AVATAR-ROUTE 2026-06-01] AVATAR: B | FRAUD_HISTORY: [a | b | c] | PRIMARY_ROUTE: B-DaVita-style',
+    )
+    expect(r.fraud_history).toEqual(['a', 'b', 'c'])
+    expect(r.primary_route).toBe('B-DaVita-style')
+  })
 })
 
 describe('parseTier', () => {
@@ -58,5 +74,10 @@ describe('parseTier', () => {
     expect(parseTier('TIER 1 - gold standard')).toBe(1)
     expect(parseTier('TIER 2 SIDECAR')).toBe(2)
     expect(parseTier('no marker present')).toBe(0)
+  })
+
+  it('does not match TIER inside another word (frontier, rentier)', () => {
+    expect(parseTier('frontier markets outlook 2050')).toBe(0)
+    expect(parseTier('a rentier 3 economy')).toBe(0)
   })
 })
