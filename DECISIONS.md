@@ -74,3 +74,71 @@ mirror issue, not a version issue; re-run with a warm cache.
 
 **Consider adding.** Phase 2a: pin exact versions via a committed `package-lock.json`
 (it is committed) and consider Tailwind 4 once its config story stabilizes.
+
+---
+
+## Decision: daily-note filename convention
+
+**Context.** The vault's `40_Daily Notes/` folder is empty, so there is no existing
+file to infer the naming from. The template frontmatter uses `date: {{date:YYYY-MM-DD}}`.
+
+**Call.** Daily notes live at `<vault>/40_Daily Notes/<YYYY-MM-DD>.md` (e.g.
+`2026-06-05.md`). The vault root defaults to the real vault path and is overridable
+via the `GOL_VAULT_ROOT` env var (tests point it at a temp dir).
+
+**Rationale.** `YYYY-MM-DD.md` is the standard Obsidian daily-note pattern and
+matches the template's date format, so it should line up with however the launchd
+generator (a separate task) ends up naming files.
+
+**Test for Jordan.** Decide your daily-note generator's filename. If it writes
+`2026-06-05 Friday.md` instead of `2026-06-05.md`, change `dailyNotePath()` in
+`src/main/vault.ts` to match. Run `npm test -- tests/vault.test.ts` after any change.
+
+**Consider adding.** Phase 2a: read the Obsidian daily-notes plugin config to derive
+the format instead of hard-coding it.
+
+---
+
+## Decision: normalize YAML-parsed dates back to strings
+
+**Context.** `gray-matter` (js-yaml) auto-parses an unquoted `date: 2026-06-05` into
+a JavaScript `Date`, not a string. That broke the daily-note round-trip test and
+would surprise any caller treating `frontmatter.date` as a string.
+
+**Call.** `readDailyNote` coerces `frontmatter.date` to a `YYYY-MM-DD` string on read
+(`coerceDateString` in `src/main/vault.ts`).
+
+**Rationale.** The locked types declare `date: string`; normalizing on read keeps the
+type honest and makes read -> write -> read stable. Only the `date` key is coerced;
+other fields are left as YAML produced them.
+
+**Test for Jordan.** Run `npm test -- tests/vault.test.ts` (the round-trip test). If
+you later add other date-typed frontmatter keys you want as strings, quote them in
+the template or extend `coerceDateString`.
+
+**Consider adding.** Maybe: a custom js-yaml schema on the gray-matter engine so no
+frontmatter value is ever auto-parsed into a Date.
+
+---
+
+## Decision: empty / missing vault degrades to a typed error, not a crash
+
+**Context.** The prompt asks what happens if the vault folder or a daily note is
+missing. The app should not hard-crash on a missing file.
+
+**Call.** Vault reads throw a typed `VaultFileNotFoundError` (carrying the path) on
+ENOENT; all other errors propagate. Writes (`writeDailyNote`) `mkdir -p` the parent
+first, so writing a note for a brand-new day always succeeds.
+
+**Rationale.** A typed error lets the renderer show a graceful "no note yet, run
+morning intake" state instead of an uncaught exception, while writes self-heal the
+directory. The morning-intake flow (deferred) will create the day's note from the
+template.
+
+**Test for Jordan.** Run `npm test -- tests/vault.test.ts` (the "does not exist"
+test). In the app, before any daily note exists, `getDailyNote` rejects with
+VaultFileNotFoundError; confirm the eventual morning-intake view treats that as
+"create from template," not an error toast.
+
+**Consider adding.** Phase 2a: a `readDailyNoteOrCreate(date)` that materializes the
+template when the note is absent.
