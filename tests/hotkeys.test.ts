@@ -17,7 +17,7 @@ const EXPECTED_ACCELERATORS = [
   'Control+Command+Down',
   'Control+Command+Left',
   'Control+Command+Right',
-  'Control+Command+Plus',
+  'Control+Command+=',
   'Control+Command+-',
   'Control+Command+C',
 ]

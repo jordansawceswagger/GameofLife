@@ -33,8 +33,8 @@ Hotkeys (global):
 | Control+Cmd+Down   | done           |
 | Control+Cmd+Left   | pause          |
 | Control+Cmd+Right  | playbook       |
-| Control+Cmd+Plus   | add-to-queue   |
-| Control+Cmd+Minus  | strike         |
+| Control+Cmd+=      | add-to-queue   |
+| Control+Cmd+-      | strike         |
 | Control+Cmd+C      | crm            |
 
 ## Test
